@@ -1,0 +1,11 @@
+The arduino-dtmf project.
+
+This is a dtmf dialer that takes a phone number as input from the code
+and plays the tone using a arduino.
+
+
+-----DISCLAIMER-----
+This current code is not yet fully operational as it only calculates what frequency it should have generated.
+--------------------
+
+For more info on arduino see http://www.arduino.cc
