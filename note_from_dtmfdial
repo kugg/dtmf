@@ -1,0 +1,14 @@
+        for (i = 0; i < tabsize; i++) {
+                d = 2*M_PI*i;
+                costab[i] = (int)((volume/100.)*16383.*cos(d/tabsize));
+        }
+
+int bits        = 8;
+int speed       = 8000;
+int tone_time   = 100;
+int silent_time = 50;
+int sleep_time  = 500;
+int volume      = 100;
+int format      = AFMT_U8;
+int use_audio   = 1;
+
