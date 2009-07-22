@@ -11,7 +11,8 @@
 //http://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-F.902-199502-I!!PDF-E&type=items
 
 
-#define PIN_ROW 9
+#define outputPin 9
+
 
 #define MAX_BINS 4      
 
@@ -52,19 +53,34 @@ void setup()
   Serial.begin(9600);
  // pinMode(PIN_ROW, OUTPUT);
  // pinMode(PIN_COL, OUTPUT);
+ pinMode(outputPin, OUTPUT);
 }
 
-int write_signal(int col_freq, int row_freq, int length) {
-  int tone_length=1;
+#define pulse_length 10
+
+int write_signal(int col_freq, int row_freq, long length_us) {
+  long time=0;
   unsigned int sample;
-  while (tone_length<length) {
+  while (time<length_us) {
 /*    sample = (unsigned char)(128.0 + 64.0*cos(2*pi*col_freq*tone_length) 
                                 + 64.0*cos(2*pi*row_freq*tone_length));*/
-    sample = ( cos( 2*pi*col_freq*tone_length ) + cos( 2*pi*row_freq*tone_length ) );
-    analogWrite(PIN_ROW, sample);
-    tone_length += 1.0; /* increment time */
+    sample = (( cos( 2*pi*col_freq*time ) + cos( 2*pi*row_freq*time ) )+2.0) / 4.0;
+    //write_pulse(sample);
+    analogWrite(outputPin, sample*255);
+    delayMicroseconds(pulse_length);
+    time += pulse_length; /* increment time */
   }
   return(0);
+}
+
+
+
+void write_pulse(float val){
+  // val between 0 and 1
+  digitalWrite(outputPin, HIGH);
+  delayMicroseconds(val*pulse_length);
+  digitalWrite(outputPin, LOW);
+  delayMicroseconds((1.0-val)*pulse_length); 
 }
 
 
@@ -83,38 +99,13 @@ struct retarr keytofreq(char key)
     }
   }
 }
-/*
-int freqtoperiod (int freq) {
-  analogWrite(PIN_ROW, 75);
-  int period;
-  return period;
-}
-*/
-
 
 void loop()
 {
- // analogWrite(PIN_ROW, 20);
- // analogWrite(PIN_COL, 200);
- 
+
   struct retarr pfreq1 = keytofreq('1');
-  struct retarr pfreq2 = keytofreq('2');
-  struct retarr pfreq3 = keytofreq('3');
   Serial.println("Tone 1:");
-  write_signal(pfreq1.row_col[0],pfreq1.row_col[1],10000);
+  write_signal(pfreq1.row_col[0],pfreq1.row_col[1],1000);
   delay(1000);
-  
-  Serial.println("Tone 2:");
-  write_signal(pfreq2.row_col[0],pfreq1.row_col[1],10000);
-  delay(1000);
-  
-  Serial.println("Tone 3:");
-  write_signal(pfreq3.row_col[0],pfreq1.row_col[1],10000);
-  delay(1000);
-  //Serial.println(pfreq1.row_col[0]);
-  //Serial.println(pfreq1.row_col[1]);
-  
-  
-    //analogWrite(PIN_ROW, 254);
-  delay(500);
 }
+
